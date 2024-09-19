@@ -16,10 +16,13 @@ class DatabaseHandler:
 
     def createUser(self,username,password):
         connection = sql.connect(self.name)
-
-        connection.execute("""INSERT INTO user
-                           VALUES (?,?)""",(username,password))
-        
-        connection.commit()
-
-        connection.close()
+        try:
+            connection.execute("""INSERT INTO user
+                            VALUES (?,?)""",(username,password))
+            
+            connection.commit()
+            connection.close()
+        except Exception as e:
+            print(e)
+            connection.close()
+            return False

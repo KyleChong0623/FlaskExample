@@ -1,6 +1,6 @@
-from flask import Flask, render_template , request
+from flask import Flask, render_template , request, redirect
 from database import DatabaseHandler
-
+from .route.home import homeBlueprint
 
 app=Flask(__name__)
 app.config["SECRET_KEY"] = "FoulTarnished"
@@ -9,9 +9,7 @@ db.createTables()
 
 
 ##routing
-@app.route("/")
-def home():
-    return render_template("index.html")
+app.register_blueprint(homeBlueprint)
 
 @app.route("/signup")
 def signup():
@@ -23,8 +21,11 @@ def createUser():
     password=request.form["password"]
     repassword=request.form["re-enter password"]
     if password == repassword:
-        db.createUser(username,password)
-        return "<h1>SUCCESS</h1>"
+        response=db.createUser(username,password)
+        if response==False:
+            return redirect("/")
+        else:
+            return "<h1>Error making account</h1>"
     else:
         return "<h1>PASSWORDS DO NOT MATCH</h1>"
 
